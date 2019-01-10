@@ -4,12 +4,12 @@ from app import app
 my_flights = [
     {
         'flightId': 1,
-        'destination': u'new york',
+        'destination': 'new york',
         'duration': 500
     },
     {
         'flightId': 2,
-        'destination': u'Toronto',
+        'destination': 'Toronto',
         'duration': 300
     }
 ]
@@ -51,3 +51,21 @@ def create_aflight():
     }
     my_flights.append(flight)
     return jsonify({'flight': flight}), 201
+
+
+@app.route('/update_flight/<int:ask_flightId>', methods=['PUT'])
+def update_flight(ask_flightId):
+    if not request.json:
+        abort(400)
+    for aflight in my_flights:
+        if aflight['flightId'] == ask_flightId:
+            aflight['destination'] = request.json.get('destination', aflight['destination'])
+
+            aflight['duration'] = request.json.get('duration', aflight['duration'])
+            return jsonify(
+                {
+                    'aflight': aflight,
+                    'message': 'Flight updated'
+                })
+
+    return jsonify({'message': 'Id not found'})
