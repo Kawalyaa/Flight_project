@@ -35,3 +35,19 @@ def get_oneFlight(id):
         if aflight['flightId'] == id:
             return jsonify({'aflight': aflight})
     return jsonify({'message': 'not found'})
+
+# This route creates aflight and adds it to my_flight list
+
+
+@app.route('/create_aflight', methods=['POST'])
+def create_aflight():
+    if not request.json or 'destination' not in request.json:
+        abort(400)
+    flight = {
+        'flightId': my_flights[-1]['flightId'] + 1,
+        'destination': request.json['destination'],
+        'duration': request.json['duration']
+
+    }
+    my_flights.append(flight)
+    return jsonify({'flight': flight}), 201
