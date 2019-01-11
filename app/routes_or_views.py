@@ -50,7 +50,13 @@ def create_aflight():
 
     }
     my_flights.append(flight)
-    return jsonify({'flight': flight}), 201
+    return jsonify(
+        {
+            'flight': flight,
+            'message': 'created'
+        }), 201
+
+# This route updets the flight if it exists in the list
 
 
 @app.route('/update_flight/<int:ask_flightId>', methods=['PUT'])
@@ -68,4 +74,20 @@ def update_flight(ask_flightId):
                     'message': 'Flight updated'
                 })
 
-    return jsonify({'message': 'Id not found'})
+    return jsonify({'message': 'Id not found'}), 404
+
+    # This route handles the delete function
+
+
+@app.route('/remove_aflight/<int:flightId>', methods=['DELETE'])
+def remove_aflight(flightId):
+    for aflight in my_flights:
+        if aflight['flightId'] == flightId:
+            my_flights.remove(aflight)
+            return jsonify(
+                {
+                    'result': True,
+                    'message': 'Deleted'
+                })
+
+    return jsonify({'message': 'id not found'}), 404
