@@ -10,3 +10,8 @@ def not_found(error):
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'error': "Bad request"}, 400))
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return make_response(jsonify({'message': 'Intternal internal_server_error or check spelling'}, 500))
