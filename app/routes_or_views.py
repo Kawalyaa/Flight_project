@@ -1,16 +1,12 @@
 # The next line means from app the folder import app the object of flask
 from flask import jsonify, request, abort, make_response
 from app import app
+
 my_flights = [
     {
         'flightId': 1,
         'destination': 'new york',
         'duration': 500
-    },
-    {
-        'flightId': 2,
-        'destination': 'Toronto',
-        'duration': 300
     }
 ]
 
@@ -20,20 +16,16 @@ from tests import errors
 @app.route('/all_flights', methods=['GET'])
 def all_flights():
     # This fuvtion shows all my_flights
-    return make_response(jsonify(
-        {
-            'status': "ok",
-            'message': "Success",
-            'my_flights': my_flights
-        }), 200
-    )
+    return make_response(jsonify({'my_flights': my_flights}))
 
 
 @app.route('/get_oneFlight/<int:id>', methods=['GET'])
 def get_oneFlight(id):
+    if not isinstance(id, int):
+        raise TypeError('This should be an integer')
     for aflight in my_flights:
         if aflight['flightId'] == id:
-            return jsonify({'aflight': aflight})
+            return jsonify({'aflight': aflight}), 200
     return jsonify({'message': 'not found'})
 
 # This route creates aflight and adds it to my_flight list
@@ -41,20 +33,30 @@ def get_oneFlight(id):
 
 @app.route('/create_aflight', methods=['POST'])
 def create_aflight():
-    if not request.json or 'destination' not in request.json:
+    if not request.get_json() or 'destination' not in request.json:
         abort(400)
+
+    request_data = request.get_json()
+    flightId = len(my_flights) + 1
+    destination = str(request_data['destination'])
+    duration = int(request_data['duration'])
     flight = {
-        'flightId': my_flights[-1]['flightId'] + 1,
-        'destination': request.json['destination'],
-        'duration': request.json['duration']
+        'flightId': flightId,
+        'destination': destination,
+        'duration': duration
 
     }
+    if destination == "":
+        destination == str
+        return jsonify({'message': 'value should not be an empty string'})
+
     my_flights.append(flight)
     return jsonify(
         {
             'flight': flight,
             'message': 'created'
         }), 201
+
 
 # This route updets the flight if it exists in the list
 
